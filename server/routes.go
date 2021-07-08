@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"path/filepath"
+	"github.com/julienschmidt/httprouter"
 )
 
 type customFileSystem struct {
@@ -28,12 +29,15 @@ func (cfs customFileSystem) Open(path string) (http.File, error) {
 	return f, nil
 }
 
-func (app *Application) route() *http.ServeMux {
-	server := http.NewServeMux()
-	server.HandleFunc("/", app.homePage)
-	server.HandleFunc("/register", app.registerUser)
-	server.HandleFunc("/channel", app.channelShow)
-	fileServer := http.FileServer(customFileSystem{http.Dir("./front/static/")})
-	server.Handle("/static/", http.StripPrefix("/static", fileServer))
-	return server
+func (app *Application) route() *httprouter.Router {
+	router := httprouter.New()
+	router.GET("/", app.homePage)
+	router.GET("/login", app.authPage)
+	router.GET("/messenger", app.messenger)
+	router.GET("/messenger/:channel", app.messenger)
+	router.POST("/auth", app.authentical)
+	router.POST("/register", app.registerUser)
+	fileServer := customFileSystem{http.Dir("./front/static/")}
+	router.ServeFiles("/static/*filepath", fileServer)
+	return router
 }

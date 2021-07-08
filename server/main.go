@@ -16,10 +16,11 @@ func main() {
 		log.New(os.Stdout, "LOG", log.Ldate|log.Ltime),
 		dbObj,
 	}
+	router := app.NewAuth(app.route())
 	server := &http.Server {
 		Addr: ":4000",
 		ErrorLog: app.logger,
-		Handler: app.route(),
+		Handler: router,
 	}
 	log.Println("Запуск сервера...")
 	err = server.ListenAndServe()

@@ -33,8 +33,12 @@ func (app *Application) route() *httprouter.Router {
 	router := httprouter.New()
 	router.GET("/", app.homePage)
 	router.GET("/login", app.authPage)
+	router.POST("/loginAttempt", app.loginAttempt)
 	router.GET("/messenger", app.messenger)
-	router.GET("/messenger/:channel", app.messenger)
+	router.GET("/sse", app.noticeHandler)
+	router.GET("/messenger/c/:channel", app.chat)
+	router.POST("/send", app.messageCreate)
+	router.POST("/showMessages", app.messagesShow)
 	router.POST("/auth", app.authentical)
 	router.POST("/register", app.registerUser)
 	fileServer := customFileSystem{http.Dir("./front/static/")}

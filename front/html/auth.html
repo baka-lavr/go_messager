@@ -46,7 +46,7 @@
             e.preventDefault();
             $.ajax({
                 type: 'post',
-                url: 'process/login.php',
+                url: '/loginAttempt',
                 data: $('#login').serialize(),
                 beforeSend: function () {
                     $('#loading').show();
@@ -55,7 +55,7 @@
                     $('#loading').hide();
                 },
                 success: function (data) {
-                    location.href = "./";
+                    location.href = "./messenger";
                 },
                 error: function (error) {
                     console.log(error);

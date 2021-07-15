@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"bsu.ru/messenger/server/database"
+	"bsu.ru/messenger/server/database/models"
 )
 
 func main() {
@@ -12,9 +13,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	sseChannel := Notifier{
+		Clients: make(map[string](chan []byte)),
+		MainChannel: make(chan mysql.ChatUpdateInfo),
+	}
+	done := make(chan interface{})
+	defer close(done)
+	go sseChannel.Broadcast(done)
+
 	app := &Application {
 		log.New(os.Stdout, "LOG", log.Ldate|log.Ltime),
 		dbObj,
+		sseChannel,
 	}
 	router := app.NewAuth(app.route())
 	server := &http.Server {
@@ -30,5 +40,6 @@ func main() {
 type Application struct{
 	logger *log.Logger
 	db *db.DataBase
+	notifier Notifier
 }
 

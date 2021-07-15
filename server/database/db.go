@@ -8,6 +8,9 @@ import (
 
 type DataBase struct {
 	User *mysql.UserModel
+	Message *mysql.MessageModel
+	Chat *mysql.ChatModel
+	Media *mysql.MediaModel
 }
 
 func OpenDB() (*DataBase, error) {
@@ -17,6 +20,15 @@ func OpenDB() (*DataBase, error) {
 	}
 	obj := &DataBase{
 		&mysql.UserModel{
+			Connection: db,
+		},
+		&mysql.MessageModel{
+			Connection: db,
+		},
+		&mysql.ChatModel{
+			Connection: db,
+		},
+		&mysql.MediaModel{
 			Connection: db,
 		},
 	}
